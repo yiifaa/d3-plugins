@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>D3 Plugin Test</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" crossorigin="anonymous">
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script src="build/d3-foo.js"></script>
+</head>
+<body>
+    <div class="container">
+       <h1 id="output"></h1>
+       <label>
+           <input type="checkbox" name="favour" value="1" checked>足球
+       </label>
+       
+    </div>
+    <script>
+        d3.select('#output').text(function(d) {
+            return d3.select('[name=favour]').length;
+        })
+    </script>
+</body>
+</html>
