@@ -7,7 +7,8 @@ var path = require('path'),
 module.exports = {
     
     entry : {
-        graph: './src/graph.es6'
+        graph: './src/graph.es6',
+        force: './src/forceTest.es6'
     },
    
     
@@ -19,7 +20,11 @@ module.exports = {
         path : build,
         //  umd包含了对amd、commonjs、var等多种规范的支持  
         libraryTarget : 'var'  
-    },    
+    },
+    
+     externals: {
+        'd3' : 'd3'
+      },
      
     devtool: '#source-map',
     
