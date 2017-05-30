@@ -3,10 +3,11 @@ import * as d3 from 'd3'
 class ForceGraph {
         
     constructor(options) {
-        this.size = {
-            width : 960,
-            height: 640
+        this.size = options.size || {
+            width : 1600,
+            height: 721
         }
+        this.startTime = options.startTime
         //  初始化Force
         //  位置布局
         this.posForce = null
@@ -30,8 +31,14 @@ class ForceGraph {
         //  连接数据
         this.links = options.links
         //  初始化模拟器
+        let n = this.nodes.length,
+            times = Math.pow(n, 2)/2
+        if(times > 300) {
+            times = 300
+        }
         this.simulation = d3.forceSimulation()
                             .nodes(this.nodes)
+                            .alphaDecay(1 - Math.pow(0.001, 1/times))
         //  初始化
         this.init()
     }
@@ -58,9 +65,14 @@ class ForceGraph {
         })
         //  解析结束事件
         this.simulation.on('end.force', () => {
-            //  初始化拖拽           
-            this.initDrag()
-            this.initZoom()
+            //  初始化拖拽
+            console.log(Date.now() - this.startTime)
+            //this.initDrag()
+            //this.initZoom()
+            //this.renderLinks()
+            //this.renderNodes()
+            //this.renderNodesPos()
+            //this.renderLinksPos()
         })
     }    
     

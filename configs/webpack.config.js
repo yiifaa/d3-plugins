@@ -8,7 +8,8 @@ module.exports = {
     
     entry : {
         graph: './src/graph.es6',
-        force: './src/forceTest.es6'
+        force: './src/forceTest.es6',
+        world: './src/world.es6'
     },
    
     
