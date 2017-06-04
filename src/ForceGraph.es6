@@ -25,7 +25,9 @@ class ForceGraph {
         this.nodeContext = this.context
                                .append("g")
                                .attr("class", "nodes")
-         
+        //  添加模式
+        this.defContext =  this.context
+                               .append('defs')
         //  节点数据
         this.nodes = options.nodes
         //  连接数据
@@ -66,9 +68,8 @@ class ForceGraph {
         //  解析结束事件
         this.simulation.on('end.force', () => {
             //  初始化拖拽
-            console.log(Date.now() - this.startTime)
-            //this.initDrag()
-            //this.initZoom()
+            this.initDrag()
+            this.initZoom()
             //this.renderLinks()
             //this.renderNodes()
             //this.renderNodesPos()
@@ -93,7 +94,7 @@ Object.assign(ForceGraph.prototype, {
      *  初始化节点布局
      */
     initBodyForce () {
-       this.bodyForce = d3.forceManyBody().strength(-60) 
+       this.bodyForce = d3.forceManyBody().strength(-100) 
     },
     
      /**
@@ -117,8 +118,45 @@ Object.assign(ForceGraph.prototype, {
                             .data(this.nodes)
                             .enter()
                             .append("circle")
-                            .attr("r", data => data.strong * 2)
-                            .attr("fill", "red")        
+                            .attr("r", data => data.strong * 3)
+                            .attr("fill", (data, index) => {
+                                if(data.url) {
+                                    let id = 'patter-' + index
+                                    this.defContext.append('pattern')
+                                                   .attr('id', id)
+                                                   .attr('height', '1')
+                                                   .attr('width', '1')
+                                                   .attr('patternContentUnits', 'objectBoundingBox')
+                                                   .append('image')
+                                                   .attr('height', 1)
+                                                   .attr('width', 1)
+                                                   .attr('preserveAspectRatio', 'none')
+                                                   .attr('xlink:href', '/static/' + data.url)
+                                    return `url(#${id})`                                 
+                                }
+                            })  
+                            .attr('stroke', data => {
+                                return data.color || 'green'
+                            })
+                            .attr('stroke-width', 4)
+                            //.attr('title', data => data.username)
+                            .on('mouseover', function(data) {
+                                var span = document.createElement('span'),
+                                    x = d3.event.x,
+                                    y = d3.event.y
+                                span.style.position = 'absolute'
+                                span.style.left = x + 10 + 'px'
+                                span.style.top = y + 10 + 'px'
+                                span.style.display = 'block'
+                                span.style.border = '1px solid #DDD'
+                                span.style.padding = '5px'
+                                span.textContent = data.username
+                                document.body.appendChild(span)
+                                this.hint = span
+                            })
+                            .on('mouseout', function() {
+                                this.hint.remove(true)
+                            })
     },
     
     renderNodesPos () {
@@ -143,6 +181,9 @@ Object.assign(ForceGraph.prototype, {
      *  渲染连接关系的位置
      */
     renderLinksPos () {
+       if(this.linksDoms === undefined) {
+           return
+       }    
        this.linkDoms.each(function(d) {           
            let x1 = d.source.x, 
                y1 = d.source.y, 
